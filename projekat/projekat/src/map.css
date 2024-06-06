@@ -1,0 +1,18 @@
+html, body, #root, .App{
+    height: 100%;
+    min-height: 100vh;
+    display: flex;
+    flex-direction: column;
+}
+
+#map {
+    flex-grow: 1;
+    background-color: lightblue; /* Opciono: Dodajte stilove po potrebi */
+  }
+.ol-attribution, 
+.ol-zoom-out,
+.ol-zoom-in,
+.ol-rotate-reset
+ {
+    visibility: hidden;
+}
