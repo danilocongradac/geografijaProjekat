@@ -4,11 +4,13 @@ html, body, #root, .App{
     display: flex;
     flex-direction: column;
 }
-
-#map {
-    flex-grow: 1;
-    background-color: lightblue; /* Opciono: Dodajte stilove po potrebi */
-  }
+#glavni, #map{
+  height: 100%;
+  width: 100%;
+}
+#map { 
+   background-color: lightblue; /* Opciono: Dodajte stilove po potrebi */
+}
 .ol-attribution, 
 .ol-zoom-out,
 .ol-zoom-in,
