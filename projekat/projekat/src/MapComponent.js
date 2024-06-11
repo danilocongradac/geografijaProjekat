@@ -70,7 +70,7 @@ const MapComponent = () => {
 
     const selectStyleMultiple = new Style({
       fill: new Fill({
-        color: 'rgba(255, 0, 0, 0.7)',
+        color: 'rgba(33, 97, 140, 0.81)',
       }),
       stroke: new Stroke({
         color: 'black',
@@ -105,14 +105,16 @@ const MapComponent = () => {
 
   return (
     <div id='glavni'>
-      <div id="map"></div>
       <MeniComponent
         check1={toggleLayerVisibility(1)}
         check2={toggleLayerVisibility(2)}
         check3={toggleLayerVisibility(3)}
         check4={toggleLayerVisibility(4)}
       />
-      <p id="ukupnaPovrsina">Ukupna povrsina selektovanih objekata: {ukupnaPovrsina} m^2</p>
+      {ukupnaPovrsina > 0 && (
+        <p id="ukupnaPovrsina">Ukupna povrsina selektovanih objekata: {ukupnaPovrsina} m²</p>
+      )}
+      <div id="map"></div>
     </div>
   );
 };

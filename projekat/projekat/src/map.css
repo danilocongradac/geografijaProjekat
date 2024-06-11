@@ -10,6 +10,7 @@ html, body, #root, .App{
 }
 #map { 
    background-color: lightblue; /* Opciono: Dodajte stilove po potrebi */
+   border-radius: 100px;
 }
 .ol-attribution, 
 .ol-zoom-out,
@@ -17,4 +18,64 @@ html, body, #root, .App{
 .ol-rotate-reset
  {
     visibility: hidden;
+}
+/* Stilizacija za header */
+.App-header {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  padding: 20px;
+  font-family: 'Arial', sans-serif;
+  color: #333;
+  text-align: center;
+}
+
+.App-header h1 {
+  font-size: 24px;
+  margin: 0;
+  color: #2c3e50; /* Tamno plava za naglasak */
+}
+
+/* Stilizacija za meni i ukupnaPovrsina */
+#meni, #ukupnaPovrsina {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  padding: 15px;
+  border-radius: 8px;
+  background-color: #ffffff; /* Bela pozadina */
+  border: 1px solid #ddd; /* Svetlo siva ivica */
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1); /* Lagana senka */
+  position: fixed;
+  left: 10px;
+  z-index: 20000;
+  font-family: 'Arial', sans-serif;
+  color: #333;
+}
+
+#meni {
+  top: 100px;
+}
+
+#ukupnaPovrsina {
+  top: 250px;
+}
+
+#meni label, #ukupnaPovrsina p {
+  margin-bottom: 10px;
+  font-size: 14px;
+}
+
+#meni input[type="checkbox"] {
+  margin-right: 10px;
+  accent-color: #215D8C; /* Tamno plava za checkbox */
+}
+
+/* Tranzicija za hover efekat */
+#meni, #ukupnaPovrsina, .App-header {
+  transition: box-shadow 0.3s ease;
+}
+
+#meni:hover, #ukupnaPovrsina:hover, .App-header:hover {
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1); /* Blago povećana senka pri hoveru */
 }
