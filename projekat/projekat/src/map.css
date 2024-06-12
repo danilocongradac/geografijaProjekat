@@ -11,6 +11,7 @@ html, body, #root, .App{
 #map { 
    background-color: lightblue; /* Opciono: Dodajte stilove po potrebi */
    border-radius: 100px;
+   border-radius: 100px;
 }
 .ol-attribution, 
 .ol-zoom-out,
@@ -37,15 +38,15 @@ html, body, #root, .App{
 }
 
 /* Stilizacija za meni i ukupnaPovrsina */
-#meni, #ukupnaPovrsina {
+/* #meni, #ukupnaPovrsina {
   display: flex;
   flex-direction: column;
   align-items: flex-start;
   padding: 15px;
   border-radius: 8px;
-  background-color: #ffffff; /* Bela pozadina */
-  border: 1px solid #ddd; /* Svetlo siva ivica */
-  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1); /* Lagana senka */
+  background-color: #ffffff; 
+  border: 1px solid #ddd; 
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1); 
   position: fixed;
   left: 10px;
   z-index: 20000;
@@ -68,14 +69,13 @@ html, body, #root, .App{
 
 #meni input[type="checkbox"] {
   margin-right: 10px;
-  accent-color: #215D8C; /* Tamno plava za checkbox */
+  accent-color: #215D8C; 
 }
 
-/* Tranzicija za hover efekat */
 #meni, #ukupnaPovrsina, .App-header {
   transition: box-shadow 0.3s ease;
 }
 
 #meni:hover, #ukupnaPovrsina:hover, .App-header:hover {
-  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1); /* Blago povećana senka pri hoveru */
-}
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+} */
