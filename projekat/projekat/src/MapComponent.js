@@ -197,9 +197,7 @@ const MapComponent = () => {
   return (
     <div id='glavni'>
       <Navbar onClicks={[handleLayersModalToggle]}></Navbar>
-      {ukupnaPovrsina > 0 && (
-        <p id="ukupnaPovrsina">Ukupna povrsina selektovanih objekata: {ukupnaPovrsina} m²</p>
-      )}
+      
       <div id="map" style={{position:'relative'}}>
         <Modal visible={layersModal} title={"Layers"}>
             <MenuComponent
@@ -215,9 +213,12 @@ const MapComponent = () => {
           {openRoadsColor &&  <SketchPicker color={roadsColor} onChangeComplete={handleRoadsColorChange} />}
           {openObjectsColor && <SketchPicker color={objectsColor} onChangeComplete={handleObjectsColorChange} />}
           </div>
-
         </Modal>
-
+        
+        <Modal visible={ukupnaPovrsina>0} title={'Povrsina'}>
+            <p id="ukupnaPovrsina">Ukupna povrsina selektovanih objekata: {ukupnaPovrsina} m²</p>
+        </Modal>
+        
       </div>
     </div>
   );

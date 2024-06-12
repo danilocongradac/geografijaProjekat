@@ -30,6 +30,7 @@ const MenuComponent = ( {checks, colors} ) => {
     };
 
 
+
    return (
         <div style={styles.menuContainer}>
             <div style={styles.menuItem}><div><ToggleSwitch id={1} isOn={isOn1} handleToggle={(handleToggle1)} /> Land Use</div> <img src={ColorPickerImage} onClick={(colors[0])}></img></div>
