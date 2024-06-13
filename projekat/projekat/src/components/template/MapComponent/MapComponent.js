@@ -11,10 +11,9 @@ import GeoJSON from 'ol/format/GeoJSON';
 import Select from 'ol/interaction/Select';
 import {click} from 'ol/events/condition';
 import './map.css';
-import MeniComponent from './MeniComponent';
-import MenuComponent from './components/template/MenuComponent/MenuComponent';
-import Modal from './components/template/Modal/Modal';
-import Navbar from './components/template/Navbar/Navbar';
+import MenuComponent from '../MenuComponent/MenuComponent';
+import Modal from '../Modal/Modal';
+import Navbar from '../Navbar/Navbar';
 import { SketchPicker } from 'react-color';
 
 const MapComponent = () => {
@@ -30,8 +29,11 @@ const MapComponent = () => {
   const [openLanduseColor, setOpenLanduseColor] = useState(false);
   const [openRoadsColor, setOpenRoadsColor] = useState(false);
   const [openObjectsColor, setOpenObjectsColor] = useState(false);
+  const [layerSwitch, setLayerSwitch] = useState([false, false, false, false])
 
   const selected = useRef([]);
+  const mapRef = useRef(null);
+  const layerRef = useRef(null);
 
   useEffect(() => {
     const raster = new TileLayer({
@@ -98,6 +100,8 @@ const MapComponent = () => {
       }),
     });
 
+    mapRef.current = map;
+
     initialLayers.slice(1).forEach(layer => layer.setVisible(false));
 
     const selectStyleMultiple = new Style({
@@ -126,14 +130,79 @@ const MapComponent = () => {
         }
       });
     });
-
+  
     return () => {
       map.setTarget(null);
     };
   }, []);
 
+  const exportPNG = () => {
+    const map = mapRef.current;
+
+    map.once('rendercomplete', function () {
+      const mapCanvas = document.createElement('canvas');
+      const size = map.getSize();
+      mapCanvas.width = size[0];
+      mapCanvas.height = size[1];
+      const mapContext = mapCanvas.getContext('2d');
+      Array.prototype.forEach.call(
+        map.getViewport().querySelectorAll('.ol-layer canvas, canvas.ol-layer'),
+        function (canvas) {
+          if (canvas.width > 0) {
+            const opacity =
+              canvas.parentNode.style.opacity || canvas.style.opacity;
+            mapContext.globalAlpha = opacity === '' ? 1 : Number(opacity);
+  
+            const backgroundColor = canvas.parentNode.style.backgroundColor;
+            if (backgroundColor) {
+              mapContext.fillStyle = backgroundColor;
+              mapContext.fillRect(0, 0, canvas.width, canvas.height);
+            }
+  
+            let matrix;
+            const transform = canvas.style.transform;
+            if (transform) {
+              // Get the transform parameters from the style's transform matrix
+              matrix = transform
+                .match(/^matrix\(([^\(]*)\)$/)[1]
+                .split(',')
+                .map(Number);
+            } else {
+              matrix = [
+                parseFloat(canvas.style.width) / canvas.width,
+                0,
+                0,
+                parseFloat(canvas.style.height) / canvas.height,
+                0,
+                0,
+              ];
+            }
+            // Apply the transform to the export map context
+            CanvasRenderingContext2D.prototype.setTransform.apply(
+              mapContext,
+              matrix
+            );
+            mapContext.drawImage(canvas, 0, 0);
+          }
+        }
+      );
+      mapContext.globalAlpha = 1;
+      mapCanvas.toBlob(function (blob) {
+      const link = document.createElement('a');
+      link.href = URL.createObjectURL(blob);
+      link.download = 'map.png';
+      document.body.appendChild(link);
+      link.click();
+      document.body.removeChild(link);
+    });
+  });
+    map.renderSync();
+  }
+  
+
   const toggleLayerVisibility = (index) => (event) => {
     layers[index].setVisible(event.target.checked);
+   
   };
 
   const handleLayersModalToggle = () => {
@@ -193,10 +262,9 @@ const MapComponent = () => {
           break;
       }
   }
-
   return (
     <div id='glavni'>
-      <Navbar onClicks={[handleLayersModalToggle]}></Navbar>
+      <Navbar onClicks={[handleLayersModalToggle, exportPNG]}></Navbar>
       
       <div id="map" style={{position:'relative'}}>
         <Modal visible={layersModal} title={"Layers"}>
@@ -214,11 +282,9 @@ const MapComponent = () => {
           {openObjectsColor && <SketchPicker color={objectsColor} onChangeComplete={handleObjectsColorChange} />}
           </div>
         </Modal>
-        
         <Modal visible={ukupnaPovrsina>0} title={'Povrsina'}>
             <p id="ukupnaPovrsina">Ukupna povrsina selektovanih objekata: {ukupnaPovrsina} m²</p>
         </Modal>
-        
       </div>
     </div>
   );

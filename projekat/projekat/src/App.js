@@ -1,7 +1,5 @@
 import React from 'react';
-import MapComponent from './MapComponent';
-import MeniComponent from './MeniComponent'
-import Navbar from './components/template/Navbar/Navbar';
+import MapComponent from './components/template/MapComponent/MapComponent';
 function App() {
   return (
     <div className="App">

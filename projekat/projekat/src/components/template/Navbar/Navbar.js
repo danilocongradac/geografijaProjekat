@@ -8,7 +8,7 @@ const Navbar = ({onClicks}) => {
       <div style={styles.logo}>Projekat iz geoinformatike</div>
       <div style={styles.navLinks}>
         <NavbarItem title={"Layers"} onClick={onClicks[0]}></NavbarItem>
-        <NavbarItem title={"Export as png"}></NavbarItem>
+        <NavbarItem title={"Export as png"} onClick={onClicks[1]}></NavbarItem>
       </div>
     </div>
   );

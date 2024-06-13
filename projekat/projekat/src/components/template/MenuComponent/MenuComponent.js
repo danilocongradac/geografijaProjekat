@@ -3,7 +3,7 @@ import ToggleSwitch from '../../atoms/ToggleSwitch/ToggleSwitch';
 import styles from './MenuComponentStyles';
 import ColorPickerImage from '../../../assets/images/art.png';
 
-const MenuComponent = ( {checks, colors} ) => {
+const MenuComponent = ( {checks, checksStatus, colors} ) => {
     const [isOn1, setIsOn1] = useState(false);
     const [isOn2, setIsOn2] = useState(false);
     const [isOn3, setIsOn3] = useState(false);
@@ -28,8 +28,6 @@ const MenuComponent = ( {checks, colors} ) => {
         setIsOn4(!isOn4);
         checks[3](event);
     };
-
-
 
    return (
         <div style={styles.menuContainer}>
