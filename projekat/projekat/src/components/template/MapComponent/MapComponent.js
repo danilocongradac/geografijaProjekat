@@ -202,7 +202,10 @@ const MapComponent = () => {
 
   const toggleLayerVisibility = (index) => (event) => {
     layers[index].setVisible(event.target.checked);
-   
+    let layersStates = layerSwitch;
+    console.log(index);
+    layersStates[index-1] = !layersStates[index-1];
+    setLayerSwitch(layersStates);
   };
 
   const handleLayersModalToggle = () => {
@@ -270,6 +273,7 @@ const MapComponent = () => {
         <Modal visible={layersModal} title={"Layers"}>
             <MenuComponent
               checks={[toggleLayerVisibility(1), toggleLayerVisibility(2), toggleLayerVisibility(3), toggleLayerVisibility(4)]}
+              checksStatus={layerSwitch}
               colors={[
                 () => handleColorEditOpening(1),
                 () => handleColorEditOpening(2),

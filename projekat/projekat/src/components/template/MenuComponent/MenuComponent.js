@@ -4,10 +4,21 @@ import styles from './MenuComponentStyles';
 import ColorPickerImage from '../../../assets/images/art.png';
 
 const MenuComponent = ( {checks, checksStatus, colors} ) => {
+
     const [isOn1, setIsOn1] = useState(false);
     const [isOn2, setIsOn2] = useState(false);
     const [isOn3, setIsOn3] = useState(false);
     const [isOn4, setIsOn4] = useState(false);
+
+    useEffect(() => {
+        if(checksStatus!=undefined){
+            setIsOn1(checksStatus[0]);
+            setIsOn2(checksStatus[1]);
+            setIsOn3(checksStatus[2]);
+            setIsOn4(checksStatus[3]);
+        }
+      }, [checksStatus]);
+    
 
     const handleToggle1 = (event) => {
         setIsOn1(!isOn1);
