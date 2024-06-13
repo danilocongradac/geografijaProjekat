@@ -2,7 +2,7 @@ import React, { useState, useEffect } from 'react';
 import styles from './ModalStyles';
 import CloseIcon from '../../../assets/images/close.png';
 
-const Modal = ({ children, visible, title }) => {
+const Modal = ({ children, visible, title, onClose }) => {
   const [visibility, setVisibility] = useState(false);
 
   useEffect(() => {
@@ -13,6 +13,14 @@ const Modal = ({ children, visible, title }) => {
     }
   }, [visible]);
 
+  const onCloseClickFunction = () =>{
+    if(onClose == undefined){
+      setVisibility(false);
+      return;
+    }
+    onClose();
+  }
+
   return (
     <div>
       {visibility && (
@@ -22,7 +30,7 @@ const Modal = ({ children, visible, title }) => {
             <img
               src={CloseIcon}
               style={styles.closeIcon}
-              onClick={() => setVisibility(false)}
+              onClick={onCloseClickFunction}
               alt="Close"
             />
           </div>

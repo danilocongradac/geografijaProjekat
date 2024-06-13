@@ -30,10 +30,13 @@ const MapComponent = () => {
   const [openRoadsColor, setOpenRoadsColor] = useState(false);
   const [openObjectsColor, setOpenObjectsColor] = useState(false);
   const [layerSwitch, setLayerSwitch] = useState([false, false, false, false])
+  const [surfaceOn, setSurfaceOn] = useState(false);
 
+  let numberOfSelectedAreas = 0;
   const selected = useRef([]);
   const mapRef = useRef(null);
   const layerRef = useRef(null);
+
 
   useEffect(() => {
     const raster = new TileLayer({
@@ -117,16 +120,26 @@ const MapComponent = () => {
 
     map.on('singleclick', function (e) {
       map.forEachFeatureAtPixel(e.pixel, function (f) {
-        const selIndex = selected.current.indexOf(f);
-        const povrsina = Math.round(f.getGeometry().getArea());
-        if (selIndex < 0) {
-          selected.current.push(f);
-          f.setStyle(selectStyleMultiple);
-          setUkupnaPovrsina(prev => prev + povrsina);
-        } else {
-          selected.current.splice(selIndex, 1);
-          f.setStyle(undefined);
-          setUkupnaPovrsina(prev => prev - povrsina);
+        try {
+          const selIndex = selected.current.indexOf(f);
+          const povrsina = Math.round(f.getGeometry().getArea());
+          if (selIndex < 0) {
+            numberOfSelectedAreas++;
+            setSurfaceOn(true);
+            selected.current.push(f);
+            f.setStyle(selectStyleMultiple);
+            setUkupnaPovrsina(prev => prev + povrsina);
+          } else {
+            numberOfSelectedAreas--;
+            if(numberOfSelectedAreas<=0){
+              setSurfaceOn(false);
+            }
+            selected.current.splice(selIndex, 1);
+            f.setStyle(undefined);
+            setUkupnaPovrsina(prev => prev - povrsina);
+        }
+        } catch (error) {
+            console.log('Za put nema povrsine');
         }
       });
     });
@@ -146,7 +159,7 @@ const MapComponent = () => {
       mapCanvas.height = size[1];
       const mapContext = mapCanvas.getContext('2d');
       Array.prototype.forEach.call(
-        map.getViewport().querySelectorAll('.ol-layer canvas, canvas.ol-layer'),
+        map.getViewport().querySelectorAll('.ol-layer canvas, canvas.ol-layer, .mapa'),
         function (canvas) {
           if (canvas.width > 0) {
             const opacity =
@@ -286,7 +299,7 @@ const MapComponent = () => {
           {openObjectsColor && <SketchPicker color={objectsColor} onChangeComplete={handleObjectsColorChange} />}
           </div>
         </Modal>
-        <Modal visible={ukupnaPovrsina>0} title={'Povrsina'}>
+        <Modal visible={surfaceOn} title={'Povrsina'} onClose={()=>setSurfaceOn(false)}>
             <p id="ukupnaPovrsina">Ukupna povrsina selektovanih objekata: {ukupnaPovrsina} m²</p>
         </Modal>
       </div>
