@@ -15,6 +15,7 @@ import MenuComponent from '../MenuComponent/MenuComponent';
 import Modal from '../Modal/Modal';
 import Navbar from '../Navbar/Navbar';
 import { SketchPicker } from 'react-color';
+import { Draw } from 'ol/interaction';
 
 const MapComponent = () => {
   const [layers, setLayers] = useState([]);
@@ -31,14 +32,21 @@ const MapComponent = () => {
   const [openObjectsColor, setOpenObjectsColor] = useState(false);
   const [layerSwitch, setLayerSwitch] = useState([false, false, false, false])
   const [surfaceOn, setSurfaceOn] = useState(false);
+  const [draw, setDraw] = useState();
+  const [drawType, setDrawType] = useState('None');
 
   let numberOfSelectedAreas = 0;
   const selected = useRef([]);
   const mapRef = useRef(null);
   const layerRef = useRef(null);
+  const [drawSource, setDrawSource] = useState(new VectorSource());
 
 
-  useEffect(() => {
+  useEffect(() => {    
+    const drawLayer = new VectorLayer({
+      source: drawSource,
+    });
+
     const raster = new TileLayer({
       source: new OSM(),
     });
@@ -91,7 +99,7 @@ const MapComponent = () => {
     setObjectsLayer(objekti);
 
     
-    const initialLayers = [raster, landuse, roads, objekti, wms];
+    const initialLayers = [raster, landuse, roads, objekti, wms, drawLayer];
     setLayers(initialLayers);
     
     const map = new Map({
@@ -117,7 +125,6 @@ const MapComponent = () => {
         width: 2,
       }),
     });
-
     map.on('singleclick', function (e) {
       map.forEachFeatureAtPixel(e.pixel, function (f) {
         try {
@@ -148,6 +155,32 @@ const MapComponent = () => {
       map.setTarget(null);
     };
   }, []);
+
+
+  useEffect(() => {
+    let map = mapRef.current
+
+    if (map) {
+      map.getInteractions().forEach((interaction) => {
+        if (interaction instanceof Draw) {
+          map.removeInteraction(interaction);
+        }
+      });
+
+      if (drawType !== 'None') {
+        const newDraw = new Draw({
+          source: drawSource,
+          type: drawType,
+        });
+        map.addInteraction(newDraw);
+        setDraw(newDraw);
+      }
+    }
+  }, [mapRef.current, drawType, drawSource]);
+
+  const handleChange = (event) => {
+    setDrawType(event.target.value);
+  };
 
   const exportPNG = () => {
     const map = mapRef.current;
@@ -285,7 +318,7 @@ const MapComponent = () => {
       <div id="map" style={{position:'relative'}}>
         <Modal visible={layersModal} title={"Layers"}>
             <MenuComponent
-              checks={[toggleLayerVisibility(1), toggleLayerVisibility(2), toggleLayerVisibility(3), toggleLayerVisibility(4)]}
+              checks={[toggleLayerVisibility(1), toggleLayerVisibility(2), toggleLayerVisibility(3), toggleLayerVisibility(4), toggleLayerVisibility(5)]}
               checksStatus={layerSwitch}
               colors={[
                 () => handleColorEditOpening(1),
@@ -303,6 +336,13 @@ const MapComponent = () => {
             <p id="ukupnaPovrsina">Ukupna povrsina selektovanih objekata: {ukupnaPovrsina} m²</p>
         </Modal>
       </div>
+      <select className="form-control mr-2 mb-2 mt-2" onChange={handleChange} value={drawType}>
+        <option value="Point">Point</option>
+        <option value="LineString">LineString</option>
+        <option value="Polygon">Polygon</option>
+        <option value="Circle">Circle</option>
+        <option value="None">None</option>
+      </select>
     </div>
   );
 };

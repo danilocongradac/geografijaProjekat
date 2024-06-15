@@ -9,6 +9,7 @@ const Navbar = ({onClicks}) => {
       <div style={styles.navLinks}>
         <NavbarItem title={"Layers"} onClick={onClicks[0]}></NavbarItem>
         <NavbarItem title={"Export as png"} onClick={onClicks[1]}></NavbarItem>
+        
       </div>
     </div>
   );
