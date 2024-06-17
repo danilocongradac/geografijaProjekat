@@ -16,10 +16,13 @@ import Modal from '../Modal/Modal';
 import Navbar from '../Navbar/Navbar';
 import { SketchPicker } from 'react-color';
 import { Draw } from 'ol/interaction';
+import { LineString, Polygon } from 'ol/geom';
+import { getLength as getLineStringLength } from 'ol/sphere';
 
 const MapComponent = () => {
   const [layers, setLayers] = useState([]);
   const [ukupnaPovrsina, setUkupnaPovrsina] = useState(0);
+  const [ukupnaDuzina, setUkupnaDuzina] = useState(0);
   const [layersModal, setLayersModal] = useState(false);
   const [landuseColor, setLanduseColor] = useState('#00FF00');
   const [landuseLayer, setLanduseLayer] = useState(null);
@@ -32,10 +35,12 @@ const MapComponent = () => {
   const [openObjectsColor, setOpenObjectsColor] = useState(false);
   const [layerSwitch, setLayerSwitch] = useState([false, false, false, false])
   const [surfaceOn, setSurfaceOn] = useState(false);
+  const [lengthOn, setLengthOn] = useState(false);
   const [draw, setDraw] = useState();
   const [drawType, setDrawType] = useState('None');
 
   let numberOfSelectedAreas = 0;
+  let numberOfSelectedLengths = 0;
   const selected = useRef([]);
   const mapRef = useRef(null);
   const layerRef = useRef(null);
@@ -127,8 +132,8 @@ const MapComponent = () => {
     });
     map.on('singleclick', function (e) {
       map.forEachFeatureAtPixel(e.pixel, function (f) {
+        const selIndex = selected.current.indexOf(f);
         try {
-          const selIndex = selected.current.indexOf(f);
           const povrsina = Math.round(f.getGeometry().getArea());
           if (selIndex < 0) {
             numberOfSelectedAreas++;
@@ -147,6 +152,26 @@ const MapComponent = () => {
         }
         } catch (error) {
             console.log('Za put nema povrsine');
+            try{
+              if (selIndex < 0) {
+                numberOfSelectedLengths++;
+                setLengthOn(true);
+                selected.current.push(f);
+                f.setStyle(selectStyleMultiple);
+                setUkupnaDuzina(prev => prev + Math.round(getLineStringLength(f.getGeometry())));
+              } else {
+                numberOfSelectedLengths--;
+                if(numberOfSelectedAreas<=0){
+                  setLengthOn(false);
+                }
+                selected.current.splice(selIndex, 1);
+                f.setStyle(undefined);
+                setUkupnaDuzina(prev => prev - Math.round(getLineStringLength(f.getGeometry())));
+              }
+            }
+            catch(e){
+              console.log("jebiga jos jedna greska: ");
+            }
         }
       });
     });
@@ -332,8 +357,9 @@ const MapComponent = () => {
           {openObjectsColor && <SketchPicker color={objectsColor} onChangeComplete={handleObjectsColorChange} />}
           </div>
         </Modal>
-        <Modal visible={surfaceOn} title={'Povrsina'} onClose={()=>setSurfaceOn(false)}>
-            <p id="ukupnaPovrsina">Ukupna povrsina selektovanih objekata: {ukupnaPovrsina} m²</p>
+        <Modal visible={surfaceOn || lengthOn} title={'Povrsina'} onClose={()=>{setSurfaceOn(false); setLengthOn(false)}}>
+        <p id="ukupnaPovrsina">Ukupna povrsina selektovanih objekata: {ukupnaPovrsina} m²</p>
+        <p id="ukupnaDuzina">Ukupna duzina selektovanih objekata: {ukupnaDuzina} m</p>
         </Modal>
       </div>
       
