@@ -313,7 +313,7 @@ const MapComponent = () => {
   }
   return (
     <div id='glavni'>
-      <Navbar onClicks={[handleLayersModalToggle, exportPNG]}></Navbar>
+      <Navbar onClicks={[handleLayersModalToggle, exportPNG, handleChange]} drawValue={drawType}></Navbar>
       
       <div id="map" style={{position:'relative'}}>
         <Modal visible={layersModal} title={"Layers"}>
@@ -336,13 +336,7 @@ const MapComponent = () => {
             <p id="ukupnaPovrsina">Ukupna povrsina selektovanih objekata: {ukupnaPovrsina} m²</p>
         </Modal>
       </div>
-      <select className="form-control mr-2 mb-2 mt-2" onChange={handleChange} value={drawType}>
-        <option value="Point">Point</option>
-        <option value="LineString">LineString</option>
-        <option value="Polygon">Polygon</option>
-        <option value="Circle">Circle</option>
-        <option value="None">None</option>
-      </select>
+      
     </div>
   );
 };

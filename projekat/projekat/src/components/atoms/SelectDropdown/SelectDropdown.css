@@ -1,0 +1,57 @@
+/* SelectDropdown.css */
+
+.form-control {
+    transform: translateY(-5px);
+    margin-top: 0px!important;
+    padding: 8px;
+    font-size: 16px;
+    border-radius: 4px;
+    border: 1px solid #ccc;
+    width: 150px; /* Adjust width as needed */
+    display: inline-block;
+    vertical-align: middle;
+    margin-top: 10px;
+    background-color: #fff; /* Background color */
+    color: #333; /* Text color */
+  }
+  
+  .form-control:hover {
+    border-color: #128ae0; /* Border color on hover */
+  }
+  
+  .form-control:focus {
+    outline: none;
+    border-color: #128ae0; /* Border color on focus */
+  }
+  
+  /* Dropdown arrow */
+  .form-control:after {
+    content: '\25BC';  /* Unicode character for down arrow */
+    position: absolute;
+    top: calc(50% - 6px);
+    right: 10px;
+    font-size: 12px;
+    pointer-events: none;
+  }
+  
+  /* Styling for options */
+  .form-control option {
+    padding: 8px;
+    font-size: 16px;
+    background-color: #fff; /* Background color */
+    color: #333; /* Text color */
+    border-bottom: 1px solid #ddd; /* Border between options */
+  }
+  
+  .form-control option:hover {
+    background-color: #f0f0f0; /* Background color on hover */
+  }
+  
+  .select-label {
+    transform: translateY(-5px);
+    display: block;
+    font-size: 12px; /* Veličina fonta */
+    color: #2c3e50; /* Boja teksta */
+    margin-bottom: 0px; /* Margina ispod labele */
+  }
+  
