@@ -38,6 +38,7 @@ const MapComponent = () => {
   const [lengthOn, setLengthOn] = useState(false);
   const [draw, setDraw] = useState();
   const [drawType, setDrawType] = useState('None');
+  const [objectsInfoOn, setObjectsInfoOn] = useState(false);
 
   let numberOfSelectedAreas = 0;
   let numberOfSelectedLengths = 0;
@@ -130,53 +131,58 @@ const MapComponent = () => {
         width: 2,
       }),
     });
+
     map.on('singleclick', function (e) {
-      map.forEachFeatureAtPixel(e.pixel, function (f) {
-        const selIndex = selected.current.indexOf(f);
-        try {
-          const povrsina = Math.round(f.getGeometry().getArea());
-          if (selIndex < 0) {
-            numberOfSelectedAreas++;
-            setSurfaceOn(true);
-            selected.current.push(f);
-            f.setStyle(selectStyleMultiple);
-            setUkupnaPovrsina(prev => prev + povrsina);
-          } else {
-            numberOfSelectedAreas--;
-            if(numberOfSelectedAreas<=0){
-              setSurfaceOn(false);
-            }
-            selected.current.splice(selIndex, 1);
-            f.setStyle(undefined);
-            setUkupnaPovrsina(prev => prev - povrsina);
-        }
-        } catch (error) {
-            console.log('Za put nema povrsine');
-            if(f.getGeometry() instanceof Circle){
-              return;
-            }
-            try{
-              if (selIndex < 0) {
-                numberOfSelectedLengths++;
-                setLengthOn(true);
-                selected.current.push(f);
-                f.setStyle(selectStyleMultiple);
-                setUkupnaDuzina(prev => prev + Math.round(getLineStringLength(f.getGeometry())));
-              } else {
-                numberOfSelectedLengths--;
-                if(numberOfSelectedAreas<=0){
-                  setLengthOn(false);
-                }
-                selected.current.splice(selIndex, 1);
-                f.setStyle(undefined);
-                setUkupnaDuzina(prev => prev - Math.round(getLineStringLength(f.getGeometry())));
+      console.log(drawType)
+      if(drawType=='None'){
+        map.forEachFeatureAtPixel(e.pixel, function (f) {
+          const selIndex = selected.current.indexOf(f);
+          try {
+            const povrsina = Math.round(f.getGeometry().getArea());
+            if (selIndex < 0) {
+              numberOfSelectedAreas++;
+              setSurfaceOn(true);
+              selected.current.push(f);
+              f.setStyle(selectStyleMultiple);
+              setUkupnaPovrsina(prev => prev + povrsina);
+              console.log(selected.current);
+            } else {
+              numberOfSelectedAreas--;
+              if(numberOfSelectedAreas<=0){
+                setSurfaceOn(false);
               }
-            }
-            catch(e){
-              console.log("jebiga jos jedna greska: ");
-            }
-        }
-      });
+              selected.current.splice(selIndex, 1);
+              f.setStyle(undefined);
+              setUkupnaPovrsina(prev => prev - povrsina);
+          }
+          } catch (error) {
+              console.log('Za put nema povrsine');
+              if(f.getGeometry() instanceof Circle){
+                return;
+              }
+              try{
+                if (selIndex < 0) {
+                  numberOfSelectedLengths++;
+                  setLengthOn(true);
+                  selected.current.push(f);
+                  f.setStyle(selectStyleMultiple);
+                  setUkupnaDuzina(prev => prev + Math.round(getLineStringLength(f.getGeometry())));
+                } else {
+                  numberOfSelectedLengths--;
+                  if(numberOfSelectedAreas<=0){
+                    setLengthOn(false);
+                  }
+                  selected.current.splice(selIndex, 1);
+                  f.setStyle(undefined);
+                  setUkupnaDuzina(prev => prev - Math.round(getLineStringLength(f.getGeometry())));
+                }
+              }
+              catch(e){
+                console.log("Greska");
+              }
+          }
+        });
+      }
     });
   
     return () => {
@@ -343,6 +349,10 @@ const MapComponent = () => {
     setObjectsColor(newColor.hex);
   };
 
+  const handleObjectsInfoChange = ()=>{
+    setObjectsInfoOn(!objectsInfoOn);
+  }
+
   const handleColorEditOpening = (index) =>{
       
       switch(index){
@@ -363,9 +373,24 @@ const MapComponent = () => {
           break;
       }
   }
+
+  const clearSelectedList = ()=>{
+    // while(selected.current.pop()){
+    //   console.log('a');
+    // }
+    console.log('e');
+    while(selected.current.length>0){
+      selected.current[0].setStyle(undefined);
+    selected.current.splice(0,1);
+    }
+    setLengthOn(false);
+    setSurfaceOn(false);
+    setUkupnaDuzina(0);
+    setUkupnaPovrsina(0);
+  }
   return (
     <div id='glavni'>
-      <Navbar onClicks={[handleLayersModalToggle, exportPNG, handleChange]} drawValue={drawType}></Navbar>
+      <Navbar onClicks={[handleLayersModalToggle, exportPNG, handleObjectsInfoChange, handleChange]} drawValue={drawType}></Navbar>
       
       <div id="map" style={{position:'relative'}}>
         <Modal visible={layersModal} title={"Layers"}>
@@ -384,9 +409,32 @@ const MapComponent = () => {
           {openObjectsColor && <SketchPicker color={objectsColor} onChangeComplete={handleObjectsColorChange} />}
           </div>
         </Modal>
-        <Modal visible={surfaceOn || lengthOn} title={'Povrsina'} onClose={()=>{setSurfaceOn(false); setLengthOn(false)}}>
+        <Modal visible={((surfaceOn || lengthOn)&&(ukupnaPovrsina>0 || ukupnaDuzina>0)) || objectsInfoOn==true} title={'Oznaceni objekti'} onClose={()=>{setSurfaceOn(false); setLengthOn(false);setObjectsInfoOn(false)}}>
+        {selected.current.length>0?(
+          <div>
         <p id="ukupnaPovrsina">Ukupna povrsina selektovanih objekata: {ukupnaPovrsina} m²</p>
-        <p id="ukupnaDuzina">Ukupna duzina selektovanih objekata: {ukupnaDuzina} m</p>
+        <p id="ukupnaDuzina">Ukupna duzina selektovanih objekata: {Math.abs(ukupnaDuzina)} m</p>
+        <p>Ukupno selektovanih objekata: {selected.current.length}</p>
+        <table>
+          <tr>
+            <td class='htitle'>Klasa</td>
+            <td class='htitle'>Tip geometrije</td>
+            <td class='htitle'>Naziv</td>
+          </tr>
+          {selected.current.map((object)=>(
+            <tr>
+              <td>{object.values_.fclass}</td>
+              <td>{object.values_.geometry.getType().toString()}</td>
+              <td>{object.values_.name!=null?object.values_.name:'Nema naziv'}</td>
+            </tr>
+          ))}
+        </table>
+
+          <button style={{padding:'2px', marginTop:'50px'}} onClick={clearSelectedList}>Isprazni listu</button>
+          </div>
+        ):(<div>
+          <p>Nema oznacenih objekata</p>
+        </div>)}
         </Modal>
       </div>
       

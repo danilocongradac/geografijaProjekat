@@ -79,3 +79,17 @@ html, body, #root, .App{
 #meni:hover, #ukupnaPovrsina:hover, .App-header:hover {
   box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
 } */
+
+table{
+  width: 100%;
+}
+
+td{
+  padding: 5px;
+  background-color: #f2f2f2;
+  font-weight: 500;
+}
+
+.htitle{
+  font-weight: 700;
+}

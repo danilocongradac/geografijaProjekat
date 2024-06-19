@@ -10,7 +10,8 @@ const Navbar = ({onClicks, drawValue}) => {
       <div style={styles.navLinks}>
         <NavbarItem title={"Layers"} onClick={onClicks[0]}></NavbarItem>
         <NavbarItem title={"Export as png"} onClick={onClicks[1]}></NavbarItem>
-        <SelectDropdown options={["Point", "LineString", "Circle", "Polygon", "None"]} handleChange={onClicks[2]} selectedValue={drawValue}></SelectDropdown>
+        <NavbarItem title={"Oznaceni objekti"} onClick={onClicks[2]}></NavbarItem>
+        <SelectDropdown options={["Point", "LineString", "Circle", "Polygon", "None"]} handleChange={onClicks[3]} selectedValue={drawValue}></SelectDropdown>
       </div>
     </div>
   );

@@ -52,8 +52,8 @@ const MenuComponent = ( {checks, checksStatus, colors} ) => {
             <div style={styles.menuItem}><div><ToggleSwitch id={1} isOn={isOn1} handleToggle={(handleToggle1)} /> Land Use</div> <img src={ColorPickerImage} onClick={(colors[0])}></img></div>
             <div style={styles.menuItem}><div><ToggleSwitch id={2} isOn={isOn2} handleToggle={(handleToggle2)} /> Putevi</div> <img src={ColorPickerImage} onClick={(colors[1])}></img></div>
             <div style={styles.menuItem}><div><ToggleSwitch id={3} isOn={isOn3} handleToggle={(handleToggle3)} /> Objekti</div> <img src={ColorPickerImage} onClick={(colors[2])}></img></div>
-            <div style={styles.menuItem}><div><ToggleSwitch id={4} isOn={isOn4} handleToggle={(handleToggle4)} /> WMS raster</div> <img src={ColorPickerImage}></img></div>
-            <div style={styles.menuItem}><div><ToggleSwitch id={5} isOn={isOn5} handleToggle={(handleToggle5)} /> Crtanje</div> <img src={ColorPickerImage}></img></div>
+            <div style={styles.menuItem}><div><ToggleSwitch id={4} isOn={isOn4} handleToggle={(handleToggle4)} /> WMS raster</div></div>
+            <div style={styles.menuItem}><div><ToggleSwitch id={5} isOn={isOn5} handleToggle={(handleToggle5)} /> Crtanje</div> </div>
         </div>    
     )
   };
