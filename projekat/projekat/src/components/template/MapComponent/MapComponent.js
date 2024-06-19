@@ -4,7 +4,7 @@ import TileLayer from 'ol/layer/Tile';
 import OSM from 'ol/source/OSM';
 import * as olProj from 'ol/proj';
 import TileWMS from 'ol/source/TileWMS';
-import {Fill, Stroke, Style} from 'ol/style';
+import {Fill, Stroke, Style, Text} from 'ol/style';
 import VectorLayer from 'ol/layer/Vector';
 import VectorSource from 'ol/source/Vector';
 import GeoJSON from 'ol/format/GeoJSON';
@@ -16,7 +16,7 @@ import Modal from '../Modal/Modal';
 import Navbar from '../Navbar/Navbar';
 import { SketchPicker } from 'react-color';
 import { Draw } from 'ol/interaction';
-import { LineString, Polygon } from 'ol/geom';
+import { LineString, Polygon, Circle } from 'ol/geom';
 import { getLength as getLineStringLength } from 'ol/sphere';
 
 const MapComponent = () => {
@@ -152,6 +152,9 @@ const MapComponent = () => {
         }
         } catch (error) {
             console.log('Za put nema povrsine');
+            if(f.getGeometry() instanceof Circle){
+              return;
+            }
             try{
               if (selIndex < 0) {
                 numberOfSelectedLengths++;
@@ -285,22 +288,46 @@ const MapComponent = () => {
 
   useEffect(() => {
     if (landuseLayer) {
-      landuseLayer.setStyle(new Style({
-        fill: new Fill({ color: landuseColor }),
-        stroke: new Stroke({ color: '#000000', width: 1 }),
-      }));
+      landuseLayer.setStyle(function (feature) {
+        return new Style({
+          fill: new Fill({ color: landuseColor }), 
+          stroke: new Stroke({ color: '#000000', width: 1 }),
+          text: new Text({
+            text: feature.get('name'), 
+            font: '12px Calibri,sans-serif',
+            fill: new Fill({ color: '#000' }),
+            stroke: new Stroke({ color: '#fff', width:5 }),
+          }),
+        });
+      });
     }
     if (roadsLayer){
-      roadsLayer.setStyle(new Style({
-        fill: new Fill({ color: roadsColor }),
-        stroke: new Stroke({ color: roadsColor, width: 1 }),
-      }));
+      roadsLayer.setStyle(function (feature) {
+        return new Style({
+          fill: new Fill({ color: roadsColor }), 
+          stroke: new Stroke({ color: '#000000', width: 1 }),
+          text: new Text({
+            text: feature.get('name'),
+            font: '12px Calibri,sans-serif',
+            fill: new Fill({ color: '#000' }),
+            stroke: new Stroke({ color: '#fff', width:5 }),
+          }),
+        });
+      });
     }
     if (objectsLayer){
-      objectsLayer.setStyle(new Style({
-        fill: new Fill({ color: objectsColor }),
-        stroke: new Stroke({color: '#000000', width: 1 }),
-      }));
+      objectsLayer.setStyle(function (feature) {
+        return new Style({
+          fill: new Fill({ color: objectsColor }),
+          stroke: new Stroke({ color: '#000000', width: 1 }),
+          text: new Text({
+            text: feature.get('name'), 
+            font: '12px Calibri,sans-serif',
+            fill: new Fill({ color: '#000' }),
+            stroke: new Stroke({ color: '#fff', width:5 }),
+          }),
+        });
+      });
     }
   }, [landuseColor, landuseLayer, roadsLayer, roadsColor, objectsColor, objectsLayer]);
 
